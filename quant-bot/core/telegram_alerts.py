@@ -15,6 +15,30 @@ TELEGRAM_CHAT_ID   = os.environ.get("TELEGRAM_CHAT_ID")
 TELEGRAM_ENABLED = bool(TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID)
 
 
+def send_telegram(text: str, token: str = None, chat_id: str = None) -> bool:
+    """
+    Convenience wrapper — matches the quick-test command in the README.
+    Can accept a token and chat_id directly, or falls back to env vars.
+    """
+    t = token   or TELEGRAM_BOT_TOKEN
+    c = chat_id or TELEGRAM_CHAT_ID
+
+    if not (t and c):
+        print("⚠️  Telegram not configured — skipping alert.")
+        return False
+
+    url = f"https://api.telegram.org/bot{t}/sendMessage"
+    payload = {"chat_id": c, "text": text, "parse_mode": "HTML"}
+    try:
+        response = requests.post(url, json=payload, timeout=10)
+        response.raise_for_status()
+        print("✅ Telegram message sent.")
+        return True
+    except Exception as e:
+        print(f"❌ Telegram alert failed: {e}")
+        return False
+
+
 def send_telegram_message(text: str) -> bool:
     """
     Sends a plain text message to the configured Telegram chat.
