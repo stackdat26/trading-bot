@@ -218,8 +218,8 @@ Anyone can subscribe to receive signals by messaging your bot:
 - [x] Backtester (walk-forward on 55 days of 15m history)
 - [x] Telegram alerts
 - [x] Multi-user Telegram bot (/start, /stop, /status)
-- [ ] TradingView webhook integration
-- [ ] Web dashboard
+- [x] TradingView webhook integration
+- [x] Web dashboard
 - [ ] Live paper trading mode
 - [ ] Performance tracking per signal
 
