@@ -27,7 +27,9 @@ from config.settings import (
 )
 from core.data_feed import get_data
 from core.signal_engine import analyse_symbol
-from core.telegram_alerts import send_signal_alert, TELEGRAM_ENABLED
+from core.telegram_alerts import send_signal_alert, TELEGRAM_ENABLED, ensure_owner_subscribed
+from core.bot_handler import start_bot_handler
+from core.subscriber_store import subscriber_count
 
 
 # -----------------------------------------------
@@ -98,7 +100,7 @@ def run_analysis():
                 if TELEGRAM_ENABLED:
                     sent = send_signal_alert(result)
                     if sent:
-                        print(f"   📲 Telegram alert sent for {symbol}")
+                        print(f"   📲 Telegram alert sent to {sent} subscriber(s) for {symbol}")
 
         except Exception as e:
             print(f"❌ Error analysing {symbol}: {e}")
@@ -143,10 +145,15 @@ def print_signal(result: dict):
 # -----------------------------------------------
 
 if __name__ == "__main__":
+    # Auto-subscribe owner and start command handler
+    ensure_owner_subscribed()
+    start_bot_handler()
+
     print("🚀 QuantBot started")
     print(f"   Watching {len(ALL_SYMBOLS)} symbols")
     print(f"   Symbols: {', '.join(ALL_SYMBOLS)}")
     print(f"   Telegram alerts: {'✅ enabled' if TELEGRAM_ENABLED else '❌ not configured'}")
+    print(f"   Subscribers: {subscriber_count()}")
     print()
 
     # Run immediately on startup
