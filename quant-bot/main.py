@@ -27,6 +27,7 @@ from config.settings import (
 )
 from core.data_feed import get_data
 from core.signal_engine import analyse_symbol
+from core.telegram_alerts import send_signal_alert, TELEGRAM_ENABLED
 
 
 # -----------------------------------------------
@@ -85,7 +86,7 @@ def run_analysis():
             # Print result
             print_signal(result)
 
-            # Log to file
+            # Log to file and send Telegram alert
             if result["action"] != "WAIT":
                 log.info(
                     f"SIGNAL | {symbol} | {result['action']} | "
@@ -94,6 +95,10 @@ def run_analysis():
                     f"Stop: {result['stop_loss']} | "
                     f"Target: {result['take_profit']}"
                 )
+                if TELEGRAM_ENABLED:
+                    sent = send_signal_alert(result)
+                    if sent:
+                        print(f"   📲 Telegram alert sent for {symbol}")
 
         except Exception as e:
             print(f"❌ Error analysing {symbol}: {e}")
@@ -141,6 +146,7 @@ if __name__ == "__main__":
     print("🚀 QuantBot started")
     print(f"   Watching {len(ALL_SYMBOLS)} symbols")
     print(f"   Symbols: {', '.join(ALL_SYMBOLS)}")
+    print(f"   Telegram alerts: {'✅ enabled' if TELEGRAM_ENABLED else '❌ not configured'}")
     print()
 
     # Run immediately on startup
