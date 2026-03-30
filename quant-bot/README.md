@@ -12,8 +12,8 @@ Bot is actively running and broadcasting signals to subscribers.
 Subscribe: [t.me/Stackdat_bot](https://t.me/Stackdat_bot)
 
 ### 📱 Live Signal Example
-<img width="1080" height="2400" alt="image" src="https://github.com/user-attachments/assets/864031fe-d75e-4b26-a2b1-5cb4a94f4058" />
-<img width="1080" height="2400" alt="image" src="https://github.com/user-attachments/assets/353d531c-3a64-457d-83e5-260e59329dff" />
+<img width="300" height="2400" alt="image" src="https://github.com/user-attachments/assets/864031fe-d75e-4b26-a2b1-5cb4a94f4058" />
+<img width="300" height="2400" alt="image" src="https://github.com/user-attachments/assets/353d531c-3a64-457d-83e5-260e59329dff" />
 
 
 ---
