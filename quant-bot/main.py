@@ -2,15 +2,13 @@
 # =============================================
 # Run this file to start the bot.
 #
-# Usage:
-#   python main.py
-#
 # What it does:
-#   1. Loads your symbols from config/settings.py
-#   2. Fetches data for each symbol
-#   3. Runs the signal engine
-#   4. Prints results and logs them to logs/signals.log
-#   5. Waits 15 minutes and repeats
+#   1. Starts the web dashboard on port 5000
+#   2. Starts the Telegram command handler
+#   3. Fetches data and runs the signal engine
+#   4. Sends signals to Telegram + logs them
+#   5. Displays signals on the web dashboard
+#   6. Waits 15 minutes and repeats
 # =============================================
 
 import time
@@ -30,11 +28,12 @@ from core.signal_engine import analyse_symbol
 from core.telegram_alerts import send_signal_alert, TELEGRAM_ENABLED, ensure_owner_subscribed
 from core.bot_handler import start_bot_handler
 from core.subscriber_store import subscriber_count
+from core.signal_store import add_signal
+from dashboard.app import start_dashboard
 
 
 # -----------------------------------------------
 # SET UP LOGGING
-# Save every signal to a log file for later review
 # -----------------------------------------------
 
 os.makedirs("logs", exist_ok=True)
@@ -43,8 +42,8 @@ logging.basicConfig(
     level    = logging.INFO,
     format   = "%(asctime)s — %(message)s",
     handlers = [
-        logging.FileHandler("logs/signals.log"),  # Save to file
-        logging.StreamHandler(),                   # Also print to screen
+        logging.FileHandler("logs/signals.log"),
+        logging.StreamHandler(),
     ]
 )
 log = logging.getLogger(__name__)
@@ -74,22 +73,21 @@ def run_analysis():
         try:
             print(f"\n📊 Analysing {symbol}...")
 
-            # Fetch data
             df_15m, df_daily = get_data(symbol)
 
-            # Skip if data fetch failed
             if df_15m.empty or df_daily.empty:
                 print(f"⚠️  Skipping {symbol} — no data available")
                 continue
 
-            # Run signal engine
             result = analyse_symbol(symbol, df_15m, df_daily)
 
-            # Print result
             print_signal(result)
 
-            # Log to file and send Telegram alert
             if result["action"] != "WAIT":
+                # Store in dashboard
+                add_signal(result)
+
+                # Log to file
                 log.info(
                     f"SIGNAL | {symbol} | {result['action']} | "
                     f"Confidence: {result['confidence']}% | "
@@ -97,6 +95,8 @@ def run_analysis():
                     f"Stop: {result['stop_loss']} | "
                     f"Target: {result['take_profit']}"
                 )
+
+                # Send Telegram alerts
                 if TELEGRAM_ENABLED:
                     sent = send_signal_alert(result)
                     if sent:
@@ -110,9 +110,7 @@ def run_analysis():
 
 
 def print_signal(result: dict):
-    """
-    Prints a formatted signal to the console.
-    """
+    """Prints a formatted signal to the console."""
     symbol = result["symbol"]
     action = result["action"]
 
@@ -120,7 +118,6 @@ def print_signal(result: dict):
         print(f"   ⬜ {symbol} — No signal (Buy: {result['buy_score']} | Sell: {result['sell_score']})")
         return
 
-    # Only show full detail for actual signals
     emoji = "🟢" if action == "BUY" else "🔴"
 
     print(f"\n{'='*50}")
@@ -141,11 +138,14 @@ def print_signal(result: dict):
 
 
 # -----------------------------------------------
-# SCHEDULER — runs every 15 minutes
+# STARTUP
 # -----------------------------------------------
 
 if __name__ == "__main__":
-    # Auto-subscribe owner and start command handler
+    # Start web dashboard on port 5000
+    start_dashboard()
+
+    # Auto-subscribe owner and start Telegram command handler
     ensure_owner_subscribed()
     start_bot_handler()
 
@@ -154,15 +154,15 @@ if __name__ == "__main__":
     print(f"   Symbols: {', '.join(ALL_SYMBOLS)}")
     print(f"   Telegram alerts: {'✅ enabled' if TELEGRAM_ENABLED else '❌ not configured'}")
     print(f"   Subscribers: {subscriber_count()}")
+    print(f"   Dashboard: http://0.0.0.0:5000")
     print()
 
     # Run immediately on startup
     run_analysis()
 
-    # Then schedule every 15 minutes
+    # Then every 15 minutes
     schedule.every(15).minutes.do(run_analysis)
 
-    # Keep running
     try:
         while True:
             schedule.run_pending()
