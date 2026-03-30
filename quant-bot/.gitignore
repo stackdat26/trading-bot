@@ -1,0 +1,44 @@
+# =============================================
+# QuantBot — .gitignore
+# =============================================
+
+# --- SECRETS (NEVER commit these) ---
+config/secrets.py
+.env
+*.key
+
+# --- GENERATED DATA ---
+data/subscribers.json
+data/
+data_cache/
+logs/
+
+# --- PYTHON ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# --- VIRTUAL ENVIRONMENTS ---
+venv/
+env/
+.venv/
+.env/
+
+# --- JUPYTER ---
+.ipynb_checkpoints/
+*.ipynb
+
+# --- EDITOR / OS ---
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+Thumbs.db

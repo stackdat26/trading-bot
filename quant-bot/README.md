@@ -2,7 +2,7 @@
 
 > Built by a 17-year-old. Designed like a prop firm.
 
-A quantitative trading signal bot that detects **institutional liquidity sweeps** across crypto, stocks, forex, and indices — using RSI, ATR, Fibonacci retracements, pivot points, and time-inhomogeneous Markov chain regime detection.
+A quantitative trading signal bot that detects **institutional liquidity sweeps** across stocks, forex, and indices — using RSI, ATR, Fibonacci retracements, pivot points, and Markov chain regime detection. Signals are broadcast live to all Telegram subscribers.
 
 ---
 
@@ -43,33 +43,26 @@ quant-bot/
 ├── .gitignore                 ← Keeps secrets and clutter out of GitHub
 │
 ├── config/
-│   ├── settings.py            ← Your symbols, timeframes, thresholds
+│   ├── settings.py            ← Symbols, timeframes, thresholds, weights
 │   └── secrets.example.py    ← Template for API keys (never commit the real one)
 │
 ├── core/
-│   ├── data_feed.py           ← Fetches price data (REST + WebSocket)
+│   ├── data_feed.py           ← Fetches price data (Yahoo Finance + Binance)
 │   ├── indicators.py          ← RSI, ATR, EMA, Fibonacci, Pivots
-│   ├── sweep_detector.py      ← The core liquidity sweep logic
-│   └── signal_engine.py       ← Combines all signals into a score
+│   ├── sweep_detector.py      ← Core liquidity sweep detection logic
+│   ├── signal_engine.py       ← Combines all signals into a scored decision
+│   ├── telegram_alerts.py     ← Broadcasts signals to all Telegram subscribers
+│   ├── bot_handler.py         ← Handles /start, /stop, /status commands
+│   └── subscriber_store.py    ← Saves/loads subscriber list (data/subscribers.json)
 │
 ├── models/
-│   ├── markov.py              ← Time-inhomogeneous Markov chain
-│   └── regimes.py             ← Classifies market state (Bullish, Bearish, etc.)
-│
-├── execution/
-│   └── trader.py              ← Order logic + risk management (paper trade first)
+│   └── markov.py              ← Time-inhomogeneous Markov chain regime model
 │
 ├── backtest/
-│   └── backtester.py          ← Test strategy on historical data
+│   └── run_backtest.py        ← Backtests the strategy on historical data
 │
-├── notebooks/
-│   └── analysis.ipynb         ← Jupyter notebook for exploring data
-│
-├── tests/
-│   └── test_indicators.py     ← Verify your maths is right
-│
-└── logs/
-    └── signals.log            ← Every signal the bot fires gets logged here
+└── tests/
+    └── test_indicators.py     ← Unit tests for indicator calculations
 ```
 
 ---
@@ -87,16 +80,67 @@ cd quant-bot
 pip install -r requirements.txt
 ```
 
-### 3. Set up your config
+### 3. Set up your secrets
 ```bash
 cp config/secrets.example.py config/secrets.py
-# Then open secrets.py and add your API keys
+# Then open secrets.py and add your keys
 ```
 
-### 4. Run it
+You'll need:
+- **`TELEGRAM_BOT_TOKEN`** — create a bot via [@BotFather](https://t.me/BotFather) on Telegram
+- **`TELEGRAM_CHAT_ID`** — your personal Telegram chat ID (auto-subscribed as owner)
+
+### 4. Add secrets as environment variables
+
+The bot reads secrets from environment variables, not from the file directly.
+
+**On Linux/Mac:**
+```bash
+export TELEGRAM_BOT_TOKEN="your_token_here"
+export TELEGRAM_CHAT_ID="your_chat_id_here"
+python main.py
+```
+
+**On Windows:**
+```cmd
+set TELEGRAM_BOT_TOKEN=your_token_here
+set TELEGRAM_CHAT_ID=your_chat_id_here
+python main.py
+```
+
+**On Replit:** Add them in the Secrets tab — they're loaded automatically.
+
+### 5. Run the bot
 ```bash
 python main.py
 ```
+
+### 6. Test Telegram connection
+```bash
+python -c "from core.telegram_alerts import send_telegram; send_telegram('✅ QuantBot working!')"
+```
+
+### 7. Run the backtester
+```bash
+python backtest/run_backtest.py
+```
+
+---
+
+## 📲 Telegram Multi-User System
+
+Anyone can subscribe to receive signals by messaging your bot:
+
+| Command | What it does |
+|---------|-------------|
+| `/start` | Subscribe to signals |
+| `/stop` | Unsubscribe |
+| `/status` | Show how many subscribers there are |
+
+- Share your bot link (`t.me/YourBotName`) with anyone
+- Every subscriber receives all BUY/SELL signals in real time
+- The owner (`TELEGRAM_CHAT_ID`) is auto-subscribed on startup
+- Subscriber list persists across restarts
 
 ---
 
@@ -104,43 +148,51 @@ python main.py
 
 ```
 ==================================================
-🔍 Running strategy at 2024-01-15 14:00:00
+🔍 Running analysis at 2024-01-15 14:00:00
 ==================================================
 
-💥 SWEEP DETECTED on BTCUSDT
-   Candle Range: $1,240  |  Daily ATR: $4,100
-   Sweep Size: 30.2% of daily ATR ✅
+🟢 SIGNAL DETECTED — NVDA
+==================================================
+   Action:      BUY
+   Confidence:  80%
+   Buy Score:   80  |  Sell Score: 15
+   Entry:       167.88
+   Stop Loss:   158.05
+   Take Profit: 171.90
+   Daily ATR:   4.92
+   RSI:         29.1
 
-🎯 SIGNAL: BTCUSDT — BUY
-   Confidence Score : 74%
-   Buy Score        : 115  |  Sell Score: 20
-   Entry Price      : $42,850
-   Stop Loss        : $41,900  (2× ATR below)
-   Take Profit      : $44,500  (1.618 Fib extension)
-   Regime           : OVERSOLD → BULLISH (Markov P: 0.68)
+   Conditions:
+   ✅ RSI oversold (29.1)
+   ✅ Price below EMA20 (bearish trend reversal)
+   ✅ Sweep near support pivot (S1=166.03, S2=164.54)
+   ✅ Sweep at Fibonacci retracement (support)
+   ✅ Near monthly demand zone
+==================================================
 
-   Conditions Met:
-   ✅ Liquidity sweep (30% ATR)
-   ✅ RSI oversold (27.4)
-   ✅ Price at S1 pivot
-   ✅ Price at 0.618 Fibonacci
-   ⬜ Monthly demand zone (not close enough)
+📲 Telegram alert sent to 42 subscriber(s) for NVDA
 ```
 
 ---
 
 ## ⚠️ Assets Supported
 
-- **Crypto** — via Binance API (BTC, ETH, etc.)
-- **Stocks** — via Yahoo Finance (free, no API key needed)
-- **Forex** — via OANDA or Alpha Vantage
-- **Indices** — SPX, NAS100, DAX via Yahoo Finance
+| Asset Class | Provider | API Key Required? |
+|-------------|----------|-------------------|
+| **Stocks** | Yahoo Finance | No |
+| **Forex** | Yahoo Finance | No |
+| **Indices** | Yahoo Finance | No |
+| **Crypto** | Binance | No (public endpoint) |
+
+> Note: Binance may be geo-restricted in some hosting environments.
 
 ---
 
-## 🔐 API Keys
+## 🔐 Keeping Secrets Safe
 
-Never commit real API keys to GitHub. Use `config/secrets.py` (which is in `.gitignore`).
+- **Never** commit `config/secrets.py` to GitHub — it's in `.gitignore`
+- Use environment variables or your platform's secrets manager
+- Rotate your Telegram bot token immediately if it's ever exposed
 
 ---
 
@@ -150,11 +202,14 @@ Never commit real API keys to GitHub. Use `config/secrets.py` (which is in `.git
 - [x] Indicator calculations (RSI, ATR, EMA, Fibonacci, Pivots)
 - [x] Liquidity sweep detection
 - [x] Multi-factor signal scoring
-- [ ] Markov regime model
-- [ ] Backtester
+- [x] Markov regime model
+- [x] Backtester (walk-forward on 55 days of 15m history)
+- [x] Telegram alerts
+- [x] Multi-user Telegram bot (/start, /stop, /status)
 - [ ] TradingView webhook integration
-- [ ] Telegram alerts
 - [ ] Web dashboard
+- [ ] Live paper trading mode
+- [ ] Performance tracking per signal
 
 ---
 
