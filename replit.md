@@ -8,7 +8,7 @@ The bot scans multiple asset classes (Crypto, Stocks, Forex, Indices) on a 15-mi
 
 ## Tech Stack
 
-- **Language:** Python 3.12
+- **Language:** Python 3.11 (Replit environment)
 - **Data Sources:** Yahoo Finance (yfinance) for stocks/forex/indices, Binance API for crypto
 - **Data Processing:** pandas, numpy
 - **Technical Indicators:** pandas-ta (RSI, ATR, EMA, etc.)
