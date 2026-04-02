@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: quantbot
+    runtime: python
+    buildCommand: pip install -r quant-bot/requirements.txt
+    startCommand: cd quant-bot && python main.py
+    plan: free
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: TELEGRAM_BOT_USERNAME
+        sync: false
