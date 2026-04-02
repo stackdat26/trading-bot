@@ -29,7 +29,30 @@ from config.settings import (
     ATR_TARGET_MULTIPLIER,
     RSI_OVERSOLD,
     RSI_OVERBOUGHT,
+    SWEEP_THRESHOLDS,
 )
+
+
+def _asset_class(symbol: str) -> str:
+    """
+    Classifies a symbol string into one of the five asset classes.
+
+    Rules (in order):
+      - Crypto:    ends with 'USDT'
+      - Forex:     ends with '=X'
+      - Commodity: ends with '=F'
+      - Index:     starts with '^'
+      - Stock:     everything else (US and UK equities)
+    """
+    if symbol.endswith("USDT"):
+        return "crypto"
+    if symbol.endswith("=X"):
+        return "forex"
+    if symbol.endswith("=F"):
+        return "commodity"
+    if symbol.startswith("^"):
+        return "index"
+    return "stock"
 
 
 def analyse_symbol(symbol: str, df_15m: pd.DataFrame, df_daily: pd.DataFrame) -> dict:
@@ -84,7 +107,9 @@ def analyse_symbol(symbol: str, df_15m: pd.DataFrame, df_daily: pd.DataFrame) ->
     # STEP 2: RUN SWEEP DETECTION
     # -----------------------------------------------
 
-    sweep = detect_liquidity_sweep(df_15m, daily_atr)
+    asset_class = _asset_class(symbol)
+    sweep_threshold = SWEEP_THRESHOLDS.get(asset_class, SWEEP_THRESHOLDS["stock"])
+    sweep = detect_liquidity_sweep(df_15m, daily_atr, threshold=sweep_threshold)
 
     # -----------------------------------------------
     # STEP 3: SCORE ALL CONDITIONS
@@ -217,17 +242,19 @@ def analyse_symbol(symbol: str, df_15m: pd.DataFrame, df_daily: pd.DataFrame) ->
     # -----------------------------------------------
 
     return {
-        "symbol":       symbol,
-        "action":       action,
-        "confidence":   confidence,
-        "buy_score":    buy_score,
-        "sell_score":   sell_score,
-        "entry":        entry,
-        "stop_loss":    stop_loss,
-        "take_profit":  take_profit,
-        "daily_atr":    round(daily_atr, 4),
-        "current_rsi":  round(current_rsi, 2),
-        "pivots":       pivots,
-        "sweep":        sweep,
-        "conditions":   conditions,
+        "symbol":           symbol,
+        "asset_class":      asset_class,
+        "sweep_threshold":  sweep_threshold,
+        "action":           action,
+        "confidence":       confidence,
+        "buy_score":        buy_score,
+        "sell_score":       sell_score,
+        "entry":            entry,
+        "stop_loss":        stop_loss,
+        "take_profit":      take_profit,
+        "daily_atr":        round(daily_atr, 4),
+        "current_rsi":      round(current_rsi, 2),
+        "pivots":           pivots,
+        "sweep":            sweep,
+        "conditions":       conditions,
     }

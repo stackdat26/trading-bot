@@ -156,8 +156,16 @@ CONTEXT_TIMEFRAME   = "1d"     # Daily candles for ATR, Pivots, Monthly levels
 
 
 # --- LIQUIDITY SWEEP SETTINGS ---
-SWEEP_THRESHOLD_PERCENT = 20   # Candle must be > 20% of daily ATR to count as sweep
-ATR_PERIOD              = 14   # Number of days to calculate ATR over
+# Dynamic threshold per asset class:
+#   Candle range must exceed this % of daily ATR to qualify as a sweep.
+SWEEP_THRESHOLDS = {
+    "crypto":      20,   # Crypto is highly volatile — needs a larger move
+    "stock":       15,   # US & UK equities
+    "forex":       10,   # FX pairs move in tighter ranges
+    "index":       12,   # Indices sit between stocks and forex
+    "commodity":   15,   # Commodities behave similarly to stocks
+}
+ATR_PERIOD = 14   # Number of days to calculate ATR over
 
 
 # --- RSI SETTINGS ---
