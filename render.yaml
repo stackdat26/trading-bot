@@ -2,6 +2,7 @@ services:
   - type: web
     name: quantbot
     runtime: python
+    pythonVersion: "3.12.0"
     buildCommand: pip install -r quant-bot/requirements.txt
     startCommand: cd quant-bot && python main.py
     plan: free
