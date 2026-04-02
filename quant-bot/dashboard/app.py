@@ -407,6 +407,11 @@ DASHBOARD_HTML = """
 """
 
 
+@app.route("/healthz")
+def healthz():
+    return "ok", 200
+
+
 @app.route("/")
 def index():
     bot_username = os.environ.get("TELEGRAM_BOT_USERNAME", "YourBotName")
