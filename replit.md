@@ -43,10 +43,21 @@ The workflow runs: `cd quant-bot && python main.py`
 - Runs signal engine every 15 minutes
 - Logs signals to `quant-bot/logs/signals.log`
 
+## Asset Coverage (333 symbols total)
+
+| Category        | Count | Source         |
+|-----------------|-------|----------------|
+| Crypto          | 40    | Binance API    |
+| US Stocks       | 98    | Yahoo Finance  |
+| UK Stocks (FTSE)| 80    | Yahoo Finance (.L suffix) |
+| Forex           | 40    | Yahoo Finance  |
+| Indices         | 24    | Yahoo Finance  |
+| Commodities     | 20    | Yahoo Finance  |
+
 ## Configuration
 
 Edit `quant-bot/config/settings.py` to:
-- Add/remove symbols to watch
+- Add/remove symbols in any of the 6 lists: `CRYPTO_SYMBOLS`, `STOCK_SYMBOLS`, `UK_STOCK_SYMBOLS`, `FOREX_SYMBOLS`, `INDEX_SYMBOLS`, `COMMODITY_SYMBOLS`
 - Adjust signal scoring weights
 - Tune risk management settings (ATR multipliers)
 - Change Markov model lookback period

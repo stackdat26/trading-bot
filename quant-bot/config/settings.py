@@ -9,25 +9,143 @@
 # Add or remove any symbols you want the bot to watch
 
 CRYPTO_SYMBOLS = [
-    "BTCUSDT",
-    "ETHUSDT",
+    # Major
+    "BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT",
+    "ADAUSDT", "AVAXUSDT", "DOGEUSDT", "DOTUSDT", "MATICUSDT",
+    "LINKUSDT", "UNIUSDT", "ATOMUSDT", "LTCUSDT", "ETCUSDT",
+    "XLMUSDT", "ALGOUSDT", "VETUSDT", "FILUSDT", "TRXUSDT",
+    # Mid-cap / trending
+    "NEARUSDT", "FTMUSDT", "SANDUSDT", "MANAUSDT", "AXSUSDT",
+    "GALAUSDT", "APEUSDT", "GMTUSDT", "OPUSDT", "ARBUSDT",
+    "INJUSDT", "SUIUSDT", "SEIUSDT", "TIAUSDT", "JUPUSDT",
+    "WIFUSDT", "BONKUSDT", "PENDLEUSDT", "STRKUSDT", "PYTHUSDT",
 ]
 
 STOCK_SYMBOLS = [
-    "AAPL",
-    "TSLA",
-    "NVDA",
+    # US S&P 500 — Tech & Mega-cap
+    "AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSLA",
+    "BRK-B", "JPM", "JNJ", "V", "PG", "UNH", "HD", "MA",
+    "DIS", "BAC", "XOM", "PFE", "KO", "WMT", "AMD", "NFLX",
+    "PYPL", "INTC", "CSCO", "ADBE", "CRM", "ORCL", "IBM",
+    # Financials
+    "GS", "MS", "C", "WFC", "AXP", "SPGI", "BLK", "CB",
+    # Industrials & Defence
+    "MMM", "CAT", "DE", "BA", "LMT", "RTX", "NOC", "GD",
+    "HON", "UPS", "FDX", "DAL", "UAL", "AAL",
+    # Consumer
+    "SBUX", "MCD", "YUM", "CMG", "NKE", "LULU", "TGT",
+    "COST", "CVS", "WBA",
+    # Healthcare
+    "TMO", "ABT", "MDT", "SYK", "ISRG", "REGN", "BIIB",
+    "AMGN", "GILD", "MRK", "LLY", "BMY",
+    # Utilities
+    "NEE", "DUK", "SO", "AEP", "EXC", "SRE", "PCG", "ED",
+    "FE", "ETR",
+    # REITs
+    "AMT", "PLD", "CCI", "EQIX", "PSA", "SPG", "O", "VICI", "AVB",
+    # Energy & Materials
+    "EOG", "PXD", "COP", "MPC", "VLO", "PSX", "OXY", "HAL",
+    "SLB", "NEM", "FCX", "AA", "X", "CLF", "MP", "ALB",
+    "LTHM", "SQM",
+]
+
+UK_STOCK_SYMBOLS = [
+    # FTSE 100 — Yahoo Finance format (append .L)
+    "HSBA.L", "BP.L", "SHEL.L", "AZN.L", "ULVR.L", "RIO.L",
+    "GSK.L", "BATS.L", "LSEG.L", "NG.L", "VOD.L", "LLOY.L",
+    "BARC.L", "NWG.L", "BT-A.L", "MKS.L", "JD.L", "ABF.L",
+    "IMB.L", "PRU.L", "STAN.L", "AAL.L", "ADM.L", "AGK.L",
+    "ANTO.L", "AUTO.L", "AV.L", "AVV.L", "BA.L", "BAB.L",
+    "BGEO.L", "BKG.L", "BLND.L", "BME.L", "BNZL.L", "BRBY.L",
+    "CCH.L", "CCL.L", "CNA.L", "CPG.L", "CRDA.L", "CRH.L",
+    "DCC.L", "DGE.L", "DLN.L", "DPLM.L", "EDV.L", "ENT.L",
+    "EXPN.L", "EZJ.L", "FERG.L", "FLTR.L", "FRES.L", "GFS.L",
+    "GLEN.L", "HIK.L", "HL.L", "HLMA.L", "HLN.L", "HWDN.L",
+    "IAG.L", "IHG.L", "III.L", "INF.L", "ITRK.L", "ITV.L",
+    "KGF.L", "LAND.L", "LGEN.L", "MNDI.L", "MNG.L", "MRO.L",
+    "MTO.L", "NXT.L", "OCDO.L", "PHNX.L", "PSON.L", "REL.L",
+    "RKT.L", "RMV.L", "RR.L", "SBRY.L", "SDR.L", "SGE.L",
+    "SGRO.L", "SKG.L", "SMDS.L", "SMIN.L", "SMT.L", "SN.L",
+    "SPX.L", "SSE.L", "SVT.L", "TSCO.L", "TW.L", "UU.L",
+    "WPP.L", "WTB.L",
 ]
 
 FOREX_SYMBOLS = [
-    "EURUSD=X",   # Euro vs Dollar (Yahoo Finance format)
-    "GBPUSD=X",
+    # Majors
+    "EURUSD=X", "GBPUSD=X", "USDJPY=X", "AUDUSD=X", "USDCAD=X",
+    "NZDUSD=X", "USDCHF=X",
+    # Euro crosses
+    "EURGBP=X", "EURJPY=X", "EURAUD=X", "EURCAD=X", "EURNZD=X",
+    "EURCHF=X",
+    # GBP crosses
+    "GBPJPY=X", "GBPAUD=X", "GBPCAD=X", "GBPCHF=X", "GBPNZD=X",
+    # AUD/NZD/CAD crosses
+    "AUDJPY=X", "AUDCAD=X", "AUDCHF=X", "AUDNZD=X",
+    "CADJPY=X", "CADCHF=X",
+    "NZDJPY=X", "NZDCAD=X", "NZDCHF=X",
+    "CHFJPY=X",
+    # Emerging markets
+    "USDMXN=X", "USDZAR=X", "USDTRY=X", "USDSEK=X", "USDNOK=X",
+    "USDDKK=X", "USDSGD=X", "USDHKD=X", "USDCNH=X", "USDINR=X",
+    "USDKRW=X", "USDBRL=X",
 ]
 
 INDEX_SYMBOLS = [
-    "^GSPC",      # S&P 500
-    "^IXIC",      # NASDAQ
-    "^FTSE",      # FTSE 100
+    # Americas
+    "^GSPC",       # S&P 500
+    "^IXIC",       # NASDAQ
+    "^DJI",        # Dow Jones
+    "^VIX",        # Volatility Index
+    "^BVSP",       # Brazil Bovespa
+    "^MXX",        # Mexico IPC
+    # Europe
+    "^FTSE",       # UK FTSE 100
+    "^GDAXI",      # Germany DAX
+    "^FCHI",       # France CAC 40
+    "^STOXX50E",   # Euro Stoxx 50
+    "^AEX",        # Netherlands AEX
+    "^IBEX",       # Spain IBEX 35
+    "^SSMI",       # Switzerland SMI
+    # Asia-Pacific
+    "^N225",       # Japan Nikkei 225
+    "^HSI",        # Hong Kong Hang Seng
+    "^AXJO",       # Australia ASX 200
+    "^NSEI",       # India Nifty 50
+    "^BSESN",      # India BSE Sensex
+    "^KS11",       # South Korea KOSPI
+    "^TWII",       # Taiwan TAIEX
+    "^STI",        # Singapore STI
+    "^KLSE",       # Malaysia KLCI
+    "^JKSE",       # Indonesia IDX
+    "^TA125.TA",   # Israel TA-125
+]
+
+COMMODITY_SYMBOLS = [
+    # Precious metals
+    "GC=F",   # Gold
+    "SI=F",   # Silver
+    "PL=F",   # Platinum
+    "PA=F",   # Palladium
+    # Energy
+    "CL=F",   # Crude Oil (WTI)
+    "BZ=F",   # Brent Crude
+    "NG=F",   # Natural Gas
+    "RB=F",   # RBOB Gasoline
+    "HO=F",   # Heating Oil
+    # Base metals
+    "HG=F",   # Copper
+    # Agricultural
+    "ZC=F",   # Corn
+    "ZW=F",   # Wheat
+    "ZS=F",   # Soybeans
+    "KC=F",   # Coffee
+    "CT=F",   # Cotton
+    "SB=F",   # Sugar
+    "CC=F",   # Cocoa
+    # Livestock
+    "LE=F",   # Live Cattle
+    "GF=F",   # Feeder Cattle
+    "HE=F",   # Lean Hogs
 ]
 
 

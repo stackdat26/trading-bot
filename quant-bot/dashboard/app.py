@@ -19,13 +19,21 @@ from core.signal_store import get_signals, get_stats
 from core.webhook_receiver import webhook_bp
 from core.subscriber_store import subscriber_count
 from config.settings import (
-    CRYPTO_SYMBOLS, STOCK_SYMBOLS, FOREX_SYMBOLS, INDEX_SYMBOLS
+    CRYPTO_SYMBOLS, STOCK_SYMBOLS, UK_STOCK_SYMBOLS,
+    FOREX_SYMBOLS, INDEX_SYMBOLS, COMMODITY_SYMBOLS,
 )
 
 app = Flask(__name__)
 app.register_blueprint(webhook_bp)
 
-ALL_SYMBOLS = CRYPTO_SYMBOLS + STOCK_SYMBOLS + FOREX_SYMBOLS + INDEX_SYMBOLS
+ALL_SYMBOLS = (
+    CRYPTO_SYMBOLS
+    + STOCK_SYMBOLS
+    + UK_STOCK_SYMBOLS
+    + FOREX_SYMBOLS
+    + INDEX_SYMBOLS
+    + COMMODITY_SYMBOLS
+)
 
 DASHBOARD_HTML = """
 <!DOCTYPE html>

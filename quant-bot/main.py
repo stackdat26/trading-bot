@@ -20,8 +20,10 @@ from datetime import datetime
 from config.settings import (
     CRYPTO_SYMBOLS,
     STOCK_SYMBOLS,
+    UK_STOCK_SYMBOLS,
     FOREX_SYMBOLS,
     INDEX_SYMBOLS,
+    COMMODITY_SYMBOLS,
 )
 from core.data_feed import get_data
 from core.signal_engine import analyse_symbol
@@ -53,7 +55,14 @@ log = logging.getLogger(__name__)
 # COMBINE ALL SYMBOLS INTO ONE LIST
 # -----------------------------------------------
 
-ALL_SYMBOLS = CRYPTO_SYMBOLS + STOCK_SYMBOLS + FOREX_SYMBOLS + INDEX_SYMBOLS
+ALL_SYMBOLS = (
+    CRYPTO_SYMBOLS
+    + STOCK_SYMBOLS
+    + UK_STOCK_SYMBOLS
+    + FOREX_SYMBOLS
+    + INDEX_SYMBOLS
+    + COMMODITY_SYMBOLS
+)
 
 
 # -----------------------------------------------
