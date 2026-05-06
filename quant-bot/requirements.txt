@@ -12,7 +12,7 @@ pandas>=2.2.0             # Tables of price data (DataFrames)
 numpy>=2.2.0              # Maths and arrays
 
 # Indicators (alternative to coding from scratch)
-pandas-ta==0.3.14b       # RSI, ATR, EMA and more — built in
+    # RSI, ATR, EMA and more — built in
 
 # Visualisation
 matplotlib>=3.8.0         # Basic charts
